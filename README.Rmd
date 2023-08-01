@@ -1,29 +1,45 @@
+---
+output: github_document
+---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
 
 # geomio
 
 <!-- badges: start -->
 <!-- badges: end -->
 
+
 ## Overview
+
+
 
 ## Installation
 
-1)  Install the official version from CRAN:
+1) Install the official version from CRAN:
 
-``` r
+```{r, eval=FALSE}
 install.packages("geomio")
 ```
 
 or the latest development version from github:
 
-``` r
+```{r, eval=FALSE}
 devtools::install_github("EhrmannS/geomio")
 ```
 
-2)  The [vignette]() …
+2) The [vignette]() ...
 
-3)  …
+3) ...
+
 
 ## Example
