@@ -41,6 +41,7 @@ setMethod(f = "setWindow",
               assertDataFrame(x = to, nrows = 2, min.cols = 2)
               assertNames(names(to), must.include = c("x", "y"))
               xVals <- c(min(to$x), max(to$x))
+              yVals <- c(min(to$y), max(to$y))
 
             } else if("bbox" %in% class(to)){
 
