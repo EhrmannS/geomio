@@ -13,7 +13,7 @@ as_geometr(x, ...)
 
 \S4method{as_geometr}{sf}(x = NULL, group = FALSE, ...)
 
-\S4method{as_geometr}{Raster}(x = NULL, group = FALSE, stack = FALSE, as_hex = FALSE, ...)
+\S4method{as_geometr}{Raster}(x = NULL, group = FALSE, as_hex = FALSE, ...)
 }
 \arguments{
 \item{x}{the object to transform to class \code{geom}.}
@@ -26,11 +26,6 @@ assigned into the groups table (\code{TRUE})? The default behaviour for
 Raster* would be not to assign values into the group attribute table if no
 RAT is available and for MULTI* features it would be to keep the attributes
 as duplicated per-feature attributes (\code{FALSE})?}
-
-\item{stack}{\link[=logical]{logical(1)}\cr should the layers of gridded objects be
-stacked, i.e., should several layers be stored as columns in the attribute
-table of features of one geom (\code{TRUE}, default), or should they be
-stored in (a list of) several geoms separately (\code{FALSE})?}
 
 \item{as_hex}{\link[=logical]{logical(1)}\cr should the bands 'red', 'green' and
 'blue' of a gridded object be transformed to hexadecimal values
