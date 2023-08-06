@@ -41,14 +41,14 @@ setMethod(f = "getPoints",
               # rebuild points
               xGrid <- seq(from = x@geometry$x[1], length.out = x@geometry$x[2], by = x@geometry$x[3]) + 0.5
               yGrid <- seq(from = x@geometry$y[1], length.out = x@geometry$y[2], by = x@geometry$y[3]) + 0.5
-              out <- tibble(x = rep(xGrid, times = length(yGrid)),
-                            y = rep(yGrid, each = length(xGrid)),
-                            fid = seq(1:(length(xGrid)*length(yGrid))))
+              out <- tibble(fid = seq(1:(length(xGrid)*length(yGrid))),
+                            x = rep(xGrid, times = length(yGrid)),
+                            y = rep(yGrid, each = length(xGrid)))
             } else {
               thePoints <- x@geometry
-              out <- tibble(x = thePoints$x,
-                            y = thePoints$y,
-                            fid = thePoints$fid)
+              out <- tibble(fid = thePoints$fid,
+                            x = thePoints$x,
+                            y = thePoints$y)
             }
 
             return(out)

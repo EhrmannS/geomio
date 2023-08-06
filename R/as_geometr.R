@@ -8,10 +8,6 @@
 #'   Raster* would be not to assign values into the group attribute table if no
 #'   RAT is available and for MULTI* features it would be to keep the attributes
 #'   as duplicated per-feature attributes (\code{FALSE})?
-#' @param stack [logical(1)][logical]\cr should the layers of gridded objects be
-#'   stacked, i.e., should several layers be stored as columns in the attribute
-#'   table of features of one geom (\code{TRUE}, default), or should they be
-#'   stored in (a list of) several geoms separately (\code{FALSE})?
 #' @param as_hex [logical(1)][logical]\cr should the bands 'red', 'green' and
 #'   'blue' of a gridded object be transformed to hexadecimal values
 #'   (\code{TRUE}), or should they be retained as columns in a stacked grid geom
@@ -165,8 +161,7 @@ setMethod(f = "as_geometr",
 #' @export
 setMethod(f = "as_geometr",
           signature = "Raster",
-          definition = function(x = NULL, group = FALSE, stack = FALSE,
-                                as_hex = FALSE, ...){
+          definition = function(x = NULL, group = FALSE, as_hex = FALSE, ...){
 
             if (!requireNamespace("raster", quietly = TRUE)) {
               stop(
@@ -176,14 +171,11 @@ setMethod(f = "as_geometr",
             }
 
             theExtent <- getExtent(x = x)
-            theCoords <- tibble(x = c(min(theExtent$x), x@ncols, raster::xres(x)),
-                                y = c(min(theExtent$y), x@nrows, raster::yres(x)))
+            theCoords <- tibble(y = c(min(theExtent$y), raster::nrow(x), raster::yres(x)),
+                                x = c(min(theExtent$x), raster::ncol(x), raster::xres(x)))
+            theCoords <- theCoords[c("x", "y")]
 
             theType <- getType(x = x)
-
-            # if(dim(x)[3] == 1){
-            #   stack <- FALSE
-            # }
 
             assertLogical(x = as_hex, len = 1)
             if(as_hex){
@@ -200,15 +192,15 @@ setMethod(f = "as_geometr",
               alpha[is.na(blue)] <- 0L
 
               x <- x[[1]] # subset to have dim(x) == 1
-              names(x) <- "gid"
+              names(x) <- "hex_col"
             }
 
-            theData <- theFeatures <- theGroups <- NULL
+            theData <- theFeatures <- theGroups <- hist <- NULL
             for(i in 1:dim(x)[3]){
 
               theInput <- x[[i]]
               theName <- names(x)[i]
-              hist <- paste0("layer '", theName, "' was transformed from an object of class ", theType[2], ".")
+              hist <- c(hist, paste0("layer '", theName, "' was transformed from an object of class ", theType[2], "."))
 
               if(as_hex){
                 rawVal <- rgb(red = red, green = green, blue = blue, alpha = alpha, maxColorValue = 255)
@@ -223,7 +215,7 @@ setMethod(f = "as_geometr",
               rleVal <- rle(rawVal)
               if(object.size(rleVal) > object.size(rawVal)){
                 tempFeatures <- tibble(rawVal)
-                names(tempFeatures) <- theName
+                names(tempFeatures) <- "val"
               } else {
                 tempFeatures <- tibble(val = rleVal$values,
                                        len = rleVal$lengths)
@@ -233,16 +225,15 @@ setMethod(f = "as_geometr",
               tempData <- list(features = tempFeatures, groups = tempGroups)
               theData <- c(theData, stats::setNames(list(tempData), theName))
 
-              out <- new(Class = "geom",
-                         type = "grid",
-                         geometry = theCoords,
-                         data = theData,
-                         window = getWindow(x = x),
-                         crs = getCRS(x = x),
-                         provenance = c(getProvenance(x), hist))
-
-
             }
+
+            out <- new(Class = "geom",
+                       type = "grid",
+                       geometry = theCoords,
+                       data = theData,
+                       window = getWindow(x = x),
+                       crs = getCRS(x = x),
+                       provenance = c(getProvenance(x), hist))
 
             return(out)
           }

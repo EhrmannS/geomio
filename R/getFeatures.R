@@ -8,7 +8,7 @@
 #' @return A tibble (or a list of tibbles per layer) of the feature attributes
 #'   of \code{x}.
 #' @family getters
-#' @importFrom tibble tibble enframe as_tibble
+#' @importFrom tibble tibble as_tibble
 #' @importFrom methods as
 #' @name getFeatures
 #' @rdname getFeatures
@@ -34,20 +34,29 @@ setMethod(f = "getFeatures",
             }
 
             if(x@type == "grid"){
-              theFeatures <- x@feature
-              out <- list()
 
-              if(all(c("val", "len") %in% names(theFeatures))){
-                temp <- list(lengths = theFeatures$len,
-                             values = theFeatures$val)
-                attr(temp, "class") <- "rle"
-                temp <- inverse.rle(temp)
-                tempFeatures <- tibble(fid = seq_along(temp), gid = temp)
-              } else {
-                tempFeatures <- tibble(fid = 1:dim(theFeatures)[1])
-                tempFeatures <- as_tibble(cbind(tempFeatures, theFeatures))
+              fids <- x@geometry$x[2] * x@geometry$y[2]
+
+              out <- tibble(fid = 1:fids)
+
+              for(i in seq_along(x@data)){
+                theFeatures <- x@data[[i]]$features
+                theName <- names(x@data[[i]]$groups)[1]
+
+                if(all(c("val", "len") %in% names(theFeatures))){
+
+                  temp <- list(lengths = theFeatures$len,
+                               values = theFeatures$val)
+                  attr(temp, "class") <- "rle"
+                  temp <- inverse.rle(temp)
+
+                } else {
+                  temp <- theFeatures
+                }
+
+                out[theName] <- temp
+
               }
-              out <- tempFeatures
 
             } else {
               out <- x@data[[1]]$features
@@ -147,7 +156,6 @@ setMethod(f = "getFeatures",
                 thePolys <- x@polygons[[i]]
 
                 if(sourceClass %in% "SpatialPolygonsDataFrame"){
-                  # tempData <- enframe(x@data[i,], name = NULL)
                   tempData <- x@data[i,]
                   otherNames <- colnames(x@data)
                 } else{

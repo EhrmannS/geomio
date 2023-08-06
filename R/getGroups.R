@@ -33,27 +33,15 @@ setMethod(f = "getGroups",
             }
 
             if(x@type == "grid"){
-              theNames <- getNames(x = x)
-              theFeatures <- getFeatures(x)
-              theGroups <- x@group
 
-              vals <- unlist(theFeatures["gid"], use.names = FALSE)
-              if(is.numeric(vals)){
-                sbs <- sortUniqueCpp(vals)
 
-                if(all(sbs %in% theGroups$gid)){
-                  tab <- theGroups[theGroups$gid %in% sbs,]
-                } else {
-                  tab <- tibble(gid = sbs)
-                }
-              } else {
-                tab <- tibble(gid = integer())
-              }
+              out <- list()
+              for(i in seq_along(x@data)){
 
-              if(length(theNames) > 1){
-                out <- stats::setNames(object = list(tab), nm = theNames)
-              } else {
-                out <- tab
+                theGroups <- x@data[[i]]$groups
+                theName <- names(x@data[[i]]$groups)[1]
+
+                out <- c(out, stats::setNames(object = list(theGroups), nm = theName))
               }
 
             } else {
@@ -107,6 +95,7 @@ setMethod(f = "getGroups",
                   names(tab) <- names
                 } else {
                   tab <- tibble(gid = integer())
+                  names(tab) <- names(x)
                 }
                 if(dim(x)[3] == 1){
                   out <- tab
