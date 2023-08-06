@@ -67,7 +67,7 @@ IntegerVector pointInPolyCpp(NumericMatrix &vert, NumericMatrix &geom, bool inve
 
           if (y < geom(i+1, 1)){             // an upward crossing
 
-            isLeft = (geom(i+1, 0) - geom(i, 0)) * (y - geom(i, 1)) - (x -  geom(i, 0)) * (geom(i+1, 1) - geom(i, 1));
+            isLeft = (geom(i+1, 0) - geom(i, 0)) * (y - geom(i, 1)) - (x - geom(i, 0)) * (geom(i+1, 1) - geom(i, 1));
             if(isLeft > 0){                  // P left of edge
               ++wn;                          // have a valid up intersect
             } else if(isLeft == 0){          // point is on the line
