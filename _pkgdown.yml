@@ -1,0 +1,90 @@
+authors:
+  Steffen Ehrmann:
+    href:  https://orcid.org/0000-0002-2958-0796
+title: geometr
+url: http://EhrmannS.github.io/geometr
+development:
+  mode: release
+
+reference:
+  - title: geometries
+    desc: functions to create geometric objects parametrically or by sketching them
+    contents:
+      - gs_point
+      - gs_line
+      - gs_polygon
+      - gs_random
+      - gs_tiles
+      - gs_voronoi
+  - title: transform geometry classes
+    desc: functions that transform between geometric classes
+    contents:
+      - gc_geom
+      - gc_raster
+      - gc_sf
+      - gc_sp
+  - title: getters and setters
+    desc: methods that standardise dealing with geometric objects
+    contents:
+      - getCols
+      - getCRS
+      - getExtent
+      - getFeatures
+      - getGroups
+      - getHistory
+      - getLayers
+      - getNames
+      - getPoints
+      - getRes
+      - getRows
+      - getType
+      - getWindow
+      - setCRS
+      - setFeatures
+      - setGroups
+      - setHistory
+      - setWindow
+  - title: standardised tools
+    desc: functions that modify geometric objects of all supported classes
+    contents:
+      - gt_filter
+      - gt_locate
+      - gt_pull
+      - gt_reflect
+      - gt_rotate
+      - gt_scale
+      - gt_sketch
+      - gt_skew
+      - gt_stretch
+      - gt_translate
+  - title: visualise
+    desc: plot geometric objects
+    contents:
+      - visualise
+      - setTheme
+  - title: classes
+    desc: new classes that come with this package
+    contents:
+      - geom-class
+      - gtTheme-class
+  - title: example data
+    desc: data that are used throughout the documentation
+    contents:
+      - gtGeoms
+      - gtSF
+      - gtSP
+      - gtRasters
+
+navbar:
+  left:
+    - text: "Get Started"
+      href: articles/geometr.html
+    - text: "Reference"
+      href: reference/index.html
+    - text: "Changelog"
+      href: news/index.html
+  right:
+    - icon: fa-twitter fa-lg
+      href: http://www.twitter.com/DerEhrmann
+    - icon: fa-github
+      href: https://github.com/EhrmannS/geometr
