@@ -13,9 +13,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-# geomio
+# geomio <a href='https://ehrmanns.github.io/geomio/'><img src='man/figures/logo.svg' align="right" height="200" /></a>
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/EhrmannS/geomio/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/EhrmannS/geomio/actions/workflows/R-CMD-check.yaml)
+[![CRAN status](https://www.r-pkg.org/badges/version/geomio)](https://CRAN.R-project.org/package=geomio)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/geomio)](https://cran.r-project.org/package=geomio)
 <!-- badges: end -->
 
 
@@ -43,3 +47,120 @@ devtools::install_github("EhrmannS/geomio")
 
 
 ## Example
+
+
+
+
+## Overview
+
+The `geometr` package provides tools that generate and process easily accessible and tidy geometric shapes (of class `geom`). Moreover, it aims to improve interoperability of spatial and other geometric classes. Spatial
+classes are typically a collection of geometric shapes (or their vertices) that are accompanied by various metadata (such as attributes and a coordinate reference system). Most spatial classes are thus conceptually quite similar, yet a common standard lacks for accessing features, vertices or the metadata. `geometr` fills this gap by
+providing tools that
+
+  - produce an identical output for the same metadata of different classes (via so-called getters) and
+  - use an identical input to write to various classes that originally require different input (via so-called setters).
+
+## Installation
+
+1) Install the official version from CRAN:
+
+```{r, eval=FALSE}
+install.packages("geometr")
+```
+
+or the latest development version from github:
+
+```{r, eval=FALSE}
+devtools::install_github("EhrmannS/geometr")
+```
+
+2) The [vignette](https://ehrmanns.github.io/geometr/articles/geometr.html) gives an in depth introduction, explains the take on interoperability and discusses the spatial class `geom` that comes with `geometr`.
+
+3) Have fun being a [geometer](https://en.wikipedia.org/wiki/List_of_geometers)\!
+
+## Examples
+
+Create a `geom`
+
+```{r}
+library(geometr)
+
+# ... from other classes
+library(sf)
+nc_sf <- st_read(system.file("shape/nc.shp", package="sf"), quiet = TRUE)
+nc_geom <- geomio::as_geometr(x = nc_sf)
+```
+
+Metadata of different classes can be extracted in interoperable quality (i.e. the same metadata in different objects/classes have the same names and the same arrangement).
+
+```{r}
+geomio::getExtent(x = nc_geom)
+
+geomio::getFeatures(x = nc_geom)
+```
+
+`geometr` only knows the feature types `point`, `line`, `polygon` and `grid` (a systematic lattice of points). 
+In contrast to the simple features standard, there are no  *MULTI\** features. 
+The way simple features have been implemented in R has the consequence that certain information can only be stored in a rather inefficient and cumbersome way. 
+Think of a set of polygons that has individual attributes at the `POLYGON` level, but also attributes at the group (`MULTIPOLYGON`) level, i.e., where all polygons of that group have the same value of the respective attributes.
+It is impossible to store this information in a single `sf` object, other than in a `POLYGON` that contains the respective attributes as duplicates (which may be very inefficient in large objects).
+
+The backbone of a `geom` are three tables, one for points, one for features and one for groups of features, the latter two of which can be provided with ancillary information (attributes).
+Each point is stored with a feature ID (`fid`) that relates it to a feature (and its attributes) and each feature is stored with a group ID (`gid`) that relates it to a group (and its attributes).
+Eventually this results in a tidier data-structure with easier access than `sp` or `sf` objects and with higher versatility.
+
+```{r}
+# when using the group = TRUE argument, the attributes of MULTI*-feature are
+# stored in the group attribute table of a geom
+nc_geom <- geomio::as_geometr(x = nc_sf, group = TRUE)
+currituck <- geo_filter(obj = nc_geom, gid == 4)
+
+geomio::getFeatures(x = currituck)
+geomio::getGroups(x = currituck)
+
+# and new attributes can be set easily, 
+newTable <- data.frame(fid = c(1:108), 
+                       attrib = rnorm(108))
+(nc_geom <- geomio::setFeatures(x = nc_geom, table = newTable))
+```
+
+Moreover, a `geom` also allows to store raster information in the same data format.
+A raster is a systematic lattice of points/pixels with one or more layers, where each pixel exists in each layer, possibly with different values, i.e., from different attributes.
+The raster attribute table (RAT) is basically already the groups attribute table of a `geom`, where a group of pixels that have the same value are associated to attributes this class has in common.
+In this case, however, the features (single pixels) don't have to be associated to a group ID, as their feature values are at the same time the group values.
+
+```{r}
+str(geoms$polygon, max.level = 2)
+
+str(geoms$grid, max.level = 2)
+```
+
+
+`geometr` comes with the `visualise` function, which makes nice-looking diagnostic spatial plots, that show explicit values whenever possible.
+For example, it does not create artificial (\"nice\") bins for the x and y axis or the values values shown in the plot, but provides the range of values explicitly.
+Moreover, you can easily set plot titles without much effort.
+
+```{r, fig.height=3}
+geo_vis(`North Carolina` = nc_geom)
+```
+
+You can use quick options to scale plot parameters to the attributes of the `geom` to modify which aspects of an object should be shown in the plot, for example when scaling `fillcol` to `NWBIR74`.
+
+```{r, fig.height=3}
+myAttr <- "NWBIR74"
+geo_vis(!!paste0("NC - ", myAttr) := nc_geom, fillcol = !!myAttr)
+```
+
+The `@window` slot of a modified `geom` is by default automatically updated.
+
+```{r, fig.height=3.5}
+geo_vis(`Currituck` = currituck, linecol = "fid")
+```
+
+Finally, cast a `geom` to another type simply by providing it in `anchor` of the respective type
+
+```{r, fig.height=3.5}
+boundPoints <- geo_point(crds = geomio::getPoints(currituck))
+geo_vis(`Currituck - boundary vertices`= boundPoints, linecol = "fid")
+```
+
