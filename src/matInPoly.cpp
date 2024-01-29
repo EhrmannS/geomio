@@ -10,7 +10,8 @@ using namespace Rcpp;
 //' @param geom [matrix(numeric)][matrix]\cr matrix of the coordinates
 //'   describing the polygon, where the first column represents x coordinate
 //'   values and the second column y coordinate values.
-//' @param negative [logical(1)][logical]\cr ...
+//' @param negative [logical(1)][logical]\cr whether or not to test points are
+//'   outside of a polygon.
 //' @details Copyright 2000 softSurfer, 2012 Dan Sunday This code may be freely
 //'   used and modified for any purpose providing that this copyright notice is
 //'   included with it. SoftSurfer makes no warranty for this code, and cannot

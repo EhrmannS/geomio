@@ -28,7 +28,6 @@ algorithm
 \seealso{
 Other matrix modify functions: 
 \code{\link{matDistanceCpp}()},
-\code{\link{matReduceCpp}()},
-\code{\link{scaleMatrixCpp}()}
+\code{\link{matReduceCpp}()}
 }
 \concept{matrix modify functions}

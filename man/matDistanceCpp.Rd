@@ -19,7 +19,6 @@ C++ function that derives a distance map of foreground patches in a matrix.
 \seealso{
 Other matrix modify functions: 
 \code{\link{diamondSquareCpp}()},
-\code{\link{matReduceCpp}()},
-\code{\link{scaleMatrixCpp}()}
+\code{\link{matReduceCpp}()}
 }
 \concept{matrix modify functions}

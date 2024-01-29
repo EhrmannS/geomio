@@ -21,7 +21,6 @@ of matrices.
 \seealso{
 Other matrix modify functions: 
 \code{\link{diamondSquareCpp}()},
-\code{\link{matDistanceCpp}()},
-\code{\link{scaleMatrixCpp}()}
+\code{\link{matDistanceCpp}()}
 }
 \concept{matrix modify functions}

@@ -14,7 +14,8 @@ are tested against \code{geom}.}
 describing the polygon, where the first column represents x coordinate
 values and the second column y coordinate values.}
 
-\item{negative}{\link[=logical]{logical(1)}\cr ...}
+\item{negative}{\link[=logical]{logical(1)}\cr whether or not to test points are
+outside of a polygon.}
 }
 \value{
 a numeric matrix
